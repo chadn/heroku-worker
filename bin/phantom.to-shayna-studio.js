@@ -1,16 +1,82 @@
-/* phantom.js javascript file, to be called like
+/* phantom.js javascript file that scrapes driving times including traffic. To be called like
  *
  * phantomjs phantom.to-shayna-studio.js
  *
  */
 
-var url1 = 'https://maps.google.com/maps?hl=en'
- + '&saddr=2733+N+Troy+St,+Chicago,+IL'
- + '&daddr=2150+S+Canalport+Ave,+Chicago,+IL+60608,+USA';
+var stathatBase = 'https://api.stathat.com/ez?email=dev@chadnorwood.com';
+
+var urls = [{
+	route: 'https://maps.google.com/maps?hl=en'
+	  + '&saddr=2733+N+Troy+St,+Chicago,+IL'
+	  + '&daddr=2150+S+Canalport+Ave,+Chicago,+IL+60608,+USA',
+	stathatValue: stathatBase + '&stat=To+Shayna+Studio&value=',
+	stathatError: stathatBase + '&stat=To+Shayna+Studio+Errors&count=1'
+},{
+	route: 'https://maps.google.com/maps?hl=en'
+	  + '&daddr=2733+N+Troy+St,+Chicago,+IL'
+	  + '&saddr=2150+S+Canalport+Ave,+Chicago,+IL+60608,+USA',
+	stathatValue: stathatBase + '&stat=From+Shayna+Studio&value=',
+	stathatError: stathatBase + '&stat=From+Shayna+Studio+Errors&count=1'
+},{
+	route: 'https://maps.google.com/maps?hl=en'
+	  + '&saddr=2733+N+Troy+St,+Chicago,+IL'
+	  + '&daddr=3150+Commercial+Ave,+Northbrook,+IL+60608,+USA',
+	stathatValue: stathatBase + '&stat=To+Optics+Planet&value=',
+	stathatError: stathatBase + '&stat=To+Optics+Planet+Errors&count=1'
+},{
+	route: 'https://maps.google.com/maps?hl=en'
+	  + '&daddr=2733+N+Troy+St,+Chicago,+IL'
+	  + '&saddr=2150+S+Canalport+Ave,+Chicago,+IL+60608,+USA',
+	stathatValue: stathatBase + '&stat=From+Optics+Planet&value=',
+	stathatError: stathatBase + '&stat=From+Optics+Planet+Errors&count=1'
+}];
 
 // '#altroute_0 .altroute-aux span' == \d mins
 
 var page = require('webpage').create();
+
+function next() {
+	if (urls.length) {
+		getTimes(urls.pop());
+	} else {
+		phantom.exit();
+	}
+}
+
+function getTimes(uo) {
+	if (!(uo && uo.route)) {
+		console.log('invalid: ', uo);
+		phantom.exit();
+		return;
+	}
+	page.open(uo.route, function (status) {
+		var now = new Date();
+		if (status !== 'success') {
+			console.log(now +' Unable to access network. '+ uo.route);
+			return;
+		}
+		var url;
+		var time = page.evaluate(pageEvaluate);
+
+		if (typeof time === 'number') {
+			url = uo.stathatValue + time;
+
+		} else if (typeof time === 'string') {
+			url = uo.stathatError;
+			console.log(now +' '+ time);
+		}
+		// http://chad-php.herokuapp.com/phantom/'+p
+		page.open(url, function (status2) {
+			if (status2 !== 'success') {
+				console.log(now +' Unable to access network. '+ url);
+			} else {
+				console.log(now.getTime() +' '+ now +' '+ status2 + ' ' + url);
+			}
+			next();
+		});
+	});
+}
 
 function pageEvaluate() {
 	
@@ -21,41 +87,6 @@ function pageEvaluate() {
 	} else {
 		return 'Fixme: '+ document.getElementById('altroute_0').innerHTML;
 	}
-	// works only for localhost, not stathat.com
-	/*
-	var el = document.createElement('script');
-	el.src = 'http://127.0.0.1:5000/phantomjs.js?s=3';
-	el.src = 'http://127.0.0.1:5000/ez?email=chad@chadnorwood.com&stat=Shayna+to+work&value=14';
-	document.body.appendChild(el);
-	*/
 }
+next();
 
-
-page.open(url1, function (status) {
-	var now = new Date();
-	if (status !== 'success') {
-		console.log(now +' Unable to access network');
-		return;
-	}
-	var url2 = 'https://api.stathat.com/ez?email=dev@chadnorwood.com';
-
-	var time = page.evaluate(pageEvaluate);
-
-	if (typeof time === 'number') {
-		url2 += '&stat=To+Shayna+Studio&value='+ time;
-
-	} else if (typeof time === 'string') {
-		url2 += '&stat=To+Shayna+Studio+Errors&count=1';
-		console.log(now +' '+ time);
-	}
-	// http://chad-php.herokuapp.com/phantom/'+p
-	page.open(url2, function (status2) {
-		console.log(now +' '+ status2 + ' ' + url2);
-		phantom.exit()
-	});
-});
-
-	/* https://github.com/ariya/phantomjs/wiki/Page-Automation */
-	//page.includeJs("http://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js", function() {
-	//page.includeJs("http://code.jquery.com/jquery-1.9.1.min.js", function() {
-		
