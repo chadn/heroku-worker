@@ -1,0 +1,14 @@
+{
+  "name": "travel_time",
+  "version": "0.0.1",
+  "description": "A worker javascript script to compute travel times.",
+  "dependencies": {
+    "phantomjs"     :  "*"
+  },
+  "devDependencies": {
+    "mocha"   :  "*",
+    "express" :  "*"
+  },
+  "license": "BSD",
+  "author": "Chad Norwood <chad@chadnorwood.com>"
+}
