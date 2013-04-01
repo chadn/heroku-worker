@@ -32,13 +32,12 @@ var urls = [{
 	stathatError: stathatBase + '&stat=From+Optics+Planet+Errors&count=1'
 }];
 
-// '#altroute_0 .altroute-aux span' == \d mins
 
 var page = require('webpage').create();
 
 function next() {
 	if (urls.length) {
-		getTimes(urls.pop());
+		getTimes(urls.shift());
 	} else {
 		phantom.exit();
 	}
@@ -66,10 +65,10 @@ function getTimes(uo) {
 			url = uo.stathatError;
 			console.log(now +' '+ time);
 		}
-		// http://chad-php.herokuapp.com/phantom/'+p
 		page.open(url, function (status2) {
 			if (status2 !== 'success') {
-				console.log(now +' Unable to access network. '+ url);
+				console.log(now +' Error fetching URL ('+ status2 +'): '+ url);
+				retry(uo);
 			} else {
 				console.log(now.getTime() +' '+ now +' '+ status2 + ' ' + url);
 			}
@@ -80,12 +79,23 @@ function getTimes(uo) {
 
 function pageEvaluate() {
 	
+	// '#altroute_0 .altroute-aux span' == \d mins
 	var m = document.getElementById('altroute_0').innerHTML;
 	m = m.match(/traffic[^\d]*(\d+)\s+mins/i);
 	if (m && m[1]) {
 		return parseInt( m[1] );
 	} else {
 		return 'Fixme: '+ document.getElementById('altroute_0').innerHTML;
+	}
+}
+function retry(uo) {
+	if (typeof uo.retries === 'undefined') {
+		uo.retries = 2;
+	} else {
+		uo.retries--;
+	}
+	if (uo.retries > 0) {
+		urls.push(uo);
 	}
 }
 next();
