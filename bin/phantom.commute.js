@@ -53,7 +53,7 @@ function retry(uo) {
 		uo.retries--;
 	}
 	if (uo.retries > 0) {
-		console.log('Waiting '+ waitMs +'ms, Retries remaining:'+ uo.retries +' for stathat:'+ uo.stathatValue);
+		console.log('Will Retry ('+ uo.retries +' retries remaining) for stathat:'+ uo.stathatValue);
 		conf.urls.push(uo);
 	} else {
 		console.log(now.getTime() +' No more retries, aborting: ' + uo.stathatValue);
