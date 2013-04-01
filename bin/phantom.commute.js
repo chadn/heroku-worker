@@ -1,11 +1,14 @@
 /* phantom.js javascript file that scrapes driving times including traffic. To be called like
  *
- * phantomjs phantom.commute.js
+ * phantomjs phantom.commute.js [configFile]
  *
  */
 
 var page = require('webpage').create();
-var configFile = '../conf/config.phantom.commute.js';
+var args = require('system').args;
+
+
+var configFile = args[1] || '../conf/commute.ord.js';
 
 function init() {
 
@@ -30,6 +33,7 @@ function next() {
 		phantom.exit();
 	}
 	var uo = conf.urls.shift();
+
 	if (uo.retries) {
 		// delay more on second retry than the first.
 		var waitMs = (1 + conf.MAX_RETRIES - uo.retries) * (conf.RETRY_DELAY || 5000);
@@ -77,6 +81,7 @@ function getTimes(uo) {
 			url = uo.stathatValue + time;
 
 		} else if (typeof time === 'string') {
+			console.log(now.getTime() +' Error evaluating html for '+ uo.route +' -- '+ time);
 			url = uo.stathatError;
 		}
 		page.open(url, function (status2) {
@@ -97,6 +102,12 @@ function pageEvaluate() {
 	m = m.match(/traffic[^\d]*(\d+)\s+mins/i);
 	if (m && m[1]) {
 		return parseInt( m[1] );
+	}
+	// Maybe its like this: In current traffic: 1 hour 4 mins
+	m = document.getElementById('altroute_0').innerHTML;
+	m = m.match(/traffic[^\d]*(\d+)\s+hour[^\d]*(\d+)\s+mins/i);
+	if (m && m[1]) {
+		return parseInt( m[2] ) + parseInt( m[1] ) * 60;
 	} else {
 		return 'Fixme: '+ document.getElementById('altroute_0').innerHTML;
 	}

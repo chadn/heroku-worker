@@ -1,9 +1,13 @@
 // config file for bin/phantom.commute.js
 
-// TODO: add your stathat email here:
+// TODO: replace ____your____@__email___.com 
+// with your stathat email here:
 var stathatBase = 'https://api.stathat.com/ez?email=____your____@__email___.com';
 
+// TODO: optionally pick new source address (saddr) and destination address (daddr)
+// Test URL in browser to make sure address works.
 var urls = [{
+	// https://maps.google.com/maps?hl=en&saddr=Chicago+O'Hare+International+Airport,+10000+West+O'Hare+Avenue,+Chicago,+IL&daddr=55+North+Michigan+Avenue,+Chicago,+IL+60601
   route: 'https://maps.google.com/maps?hl=en'
     + "&saddr=Chicago+O'Hare+International+Airport,+10000+West+O'Hare+Avenue,+Chicago,+IL"
     + '&daddr=Chicago+Bean,+55+North+Michigan+Avenue,+Chicago,+IL+60601',
