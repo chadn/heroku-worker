@@ -30,37 +30,44 @@ function next() {
 		phantom.exit();
 	}
 	var uo = conf.urls.shift();
-	if (uo.remainingRetries) {
-		var waitMs = (1 + conf.MAX_RETRIES - uo.remainingRetries) * (conf.RETRY_DELAY || 5000);
+	if (uo.retries) {
+		// delay more on second retry than the first.
+		var waitMs = (1 + conf.MAX_RETRIES - uo.retries) * (conf.RETRY_DELAY || 5000);
+		
 		setTimeout(function(){
 			getTimes(uo);
 		}, waitMs);
-		console.log('Waiting '+ waitMs +'ms, Retries left:'+ uo.remainingRetries +' for stathat:'+ uo.stathatValue);
+		console.log('Waiting '+ waitMs +'ms, Retries remaining:'+ uo.retries +', for: '+ uo.stathatValue);
 	} else {
 		getTimes(uo);
 	}
 }
 function retry(uo) {
-	if (typeof uo.remainingRetries === 'undefined') {
-		uo.remainingRetries = conf.MAX_RETRIES;
+	if (typeof uo.retries === 'undefined') {
+		uo.retries = conf.MAX_RETRIES;
 	} else {
-		uo.remainingRetries--;
+		uo.retries--;
 	}
-	if (uo.remainingRetries > 0) {
+	if (uo.retries > 0) {
+		console.log('Waiting '+ waitMs +'ms, Retries remaining:'+ uo.retries +' for stathat:'+ uo.stathatValue);
 		conf.urls.push(uo);
+	} else {
+		console.log(now.getTime() +' No more retries, aborting: ' + uo.stathatValue);
 	}
 }
 
 function getTimes(uo) {
 	if (!(uo && uo.route)) {
-		console.log('invalid: ', uo);
-		phantom.exit();
+		console.log('getTimes() invalid url obj: ', uo);
+		next();
 		return;
 	}
 	page.open(uo.route, function (status) {
 		var now = new Date();
 		if (status !== 'success') {
-			console.log(now +' Unable to access network. '+ uo.route);
+			console.log(now.getTime() +' '+ status +' '+ uo.route +' -- '+ uo.stathatValue);
+			retry(uo);
+			next();
 			return;
 		}
 		var url;
@@ -71,14 +78,12 @@ function getTimes(uo) {
 
 		} else if (typeof time === 'string') {
 			url = uo.stathatError;
-			console.log(now +' '+ time);
 		}
 		page.open(url, function (status2) {
+			now = new Date();
+			console.log(now.getTime() +' '+ status2 + ' ' + url);
 			if (status2 !== 'success') {
-				console.log(now +' Error fetching URL ('+ status2 +'): '+ url);
 				retry(uo);
-			} else {
-				console.log(now.getTime() +' '+ now +' '+ status2 + ' ' + url);
 			}
 			next();
 		});
@@ -96,6 +101,16 @@ function pageEvaluate() {
 		return 'Fixme: '+ document.getElementById('altroute_0').innerHTML;
 	}
 }
+phantom.onError = function(msg, trace) {
+    var msgStack = ['PHANTOM ERROR: ' + msg];
+    if (trace) {
+        msgStack.push('TRACE:');
+        trace.forEach(function(t) {
+            msgStack.push(' -> ' + (t.file || t.sourceURL) + ': ' + t.line + (t.function ? ' (in function ' + t.function + ')' : ''));
+        });
+    }
+    console.error(msgStack.join('\n'));
+};
 
 init();
 
