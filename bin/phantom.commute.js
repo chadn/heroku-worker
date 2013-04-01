@@ -27,7 +27,7 @@ var urls = [{
 },{
 	route: 'https://maps.google.com/maps?hl=en'
 	  + '&daddr=2733+N+Troy+St,+Chicago,+IL'
-	  + '&saddr=2150+S+Canalport+Ave,+Chicago,+IL+60608,+USA',
+	  + '&saddr=3150+Commercial+Ave,+Northbrook,+IL+60608,+USA',
 	stathatValue: stathatBase + '&stat=From+Optics+Planet&value=',
 	stathatError: stathatBase + '&stat=From+Optics+Planet+Errors&count=1'
 }];
