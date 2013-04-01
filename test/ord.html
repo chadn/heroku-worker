@@ -1,0 +1,28 @@
+<!DOCTYPE html> 
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ORD Driving Times</title>
+  <style>
+div { margin-top: 20px}
+  </style>
+</head>  
+<body>
+  <h1>Commuter Driving times, including Traffic<br/>Between O'Hare Airport (ORD) & Chicago Bean (downtown)</h1>
+
+  <script src="http://www.stathat.com/javascripts/embed.js"></script>
+
+  <script>
+  var size = { // chart size
+    w: 760, // width in pixels
+    h: 235 // height in pixels
+  }
+  // https://www.stathat.com/docs/embed_api 
+  StatHatEmbed.render({s1: 'X2hz', w: size.w, h: size.h, tf:'day_compare', s2: 'ZcmX', title:'To/From Chicago Bean'});
+  StatHatEmbed.render({s1: 'X2hz', w: size.w, h: size.h, tf:'day_compare', title:"To O'Hare From Chicago Bean"});
+  StatHatEmbed.render({s1: 'ZcmX', w: size.w, h: size.h, tf:'day_compare', title:"From O'Hare to Chicago Bean"});
+  </script>
+</body>
+</html>
+
