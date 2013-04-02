@@ -2,7 +2,9 @@
 
 // TODO: replace ____your____@__email___.com 
 // with your stathat email here:
-var stathatBase = 'https://api.stathat.com/ez?email=____your____@__email___.com';
+// .. or you can do this: heroku config:set STATHAT_EMAIL='xx@abc.com'
+var stathat_email = process.env.STATHAT_EMAIL || '____your____@__email___.com'
+var stathatBase = 'https://api.stathat.com/ez?email=' + stathat_email;
 
 // TODO: optionally pick new source address (saddr) and destination address (daddr)
 // Test URL in browser to make sure address works.
