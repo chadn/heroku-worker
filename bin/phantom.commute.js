@@ -4,6 +4,7 @@
  *
  */
 
+
 var page = require('webpage').create();
 var args = require('system').args;
 
@@ -74,20 +75,34 @@ function getTimes(uo) {
 			next();
 			return;
 		}
+		
+		// success! now extract driving time in traffic
 		var url;
 		var time = page.evaluate(pageEvaluate);
 
 		if (typeof time === 'number') {
 			url = uo.stathatValue + time;
 
-		} else if (typeof time === 'string') {
+		} else {
+			// time should be a string
 			console.log(now.getTime() +' Error evaluating html for '+ uo.route +' -- '+ time);
 			url = uo.stathatError;
 		}
 		page.open(url, function (status2) {
 			now = new Date();
 			console.log(now.getTime() +' '+ status2 + ' ' + url);
+
+			var jo;
 			if (status2 !== 'success') {
+				retry(uo);
+			} else {
+				try {
+					jo = JSON.parse(page.plainText);
+				} catch (e) {
+				}
+			}
+			if (!(jo && jo.status == 200)) {
+				console.log(now.getTime() +' Unexpected response, will retry. ' + url + ' '+ page.plainText);
 				retry(uo);
 			}
 			next();
@@ -112,6 +127,13 @@ function pageEvaluate() {
 		return 'Fixme: '+ document.getElementById('altroute_0').innerHTML;
 	}
 }
+/*/
+var links = page.evaluate(function() {
+    return [].map.call(document.querySelectorAll('a.listing-thumb'), function(link) {
+        return link.getAttribute('href');
+    });
+});
+/*/
 phantom.onError = function(msg, trace) {
     var msgStack = ['PHANTOM ERROR: ' + msg];
     if (trace) {
