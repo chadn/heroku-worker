@@ -9,17 +9,17 @@ Specifically this shows how to use [phantom.js](http://phantomjs.org/)
 1. Fetch a page. For example, google directions between any two addresses
 1. Extract data. For example, the driving time including traffic
 1. Store that data in stathat. For example,
-[view driving times between Chicago Bean and O'Hare](http://chadn.github.com/driving_time/ord.html)
+[view driving times between Chicago Bean and O'Hare](http://chadn.github.com/driving_time/test/ord.html)
 
 ## Setup
 
 Before getting started, you must have
 
-1. A free stathat account ([create](https://stathat.com/sign_in/))
-1. A free heroku account ([sign up](http://www.heroku.com/))
-1. Locally installed heroku toolbelt 
-1. Locally installed git ([setup git and github](https://help.github.com/articles/set-up-git))
-1. Locally installed phantomjs ([download and install](http://phantomjs.org/download.html))
+* A free stathat account ([create](https://stathat.com/sign_in/))
+* A free heroku account ([sign up](http://www.heroku.com/))
+* Locally installed heroku toolbelt 
+* Locally installed git ([setup git and github](https://help.github.com/articles/set-up-git))
+* Locally installed phantomjs ([download and install](http://phantomjs.org/download.html))
 
 
 ### Setup Git 
@@ -110,7 +110,7 @@ https://dashboard.heroku.com/apps/node-worker/resources
 ## BONUS
 
 1. Create more conf/*.js files, commit, push to heroku, and add task to scheduler.
-1. Publish your code to github 
+1. Publish your code to github - 
 [Sign Up](https://help.github.com/articles/set-up-git) or just 
 [Create Repository](https://help.github.com/articles/create-a-repo)
 1. [Create a html page in github](https://help.github.com/categories/20/articles)

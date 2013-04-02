@@ -1,13 +1,12 @@
 {
   "name": "driving_time",
   "version": "0.0.1",
-  "description": "A worker javascript script to compute travel times.",
+  "description": "An example of how to run background tasks in heroku using javascript and phatomjs.",
   "dependencies": {
     "phantomjs"     :  "*"
   },
-  "devDependencies": {
-    "mocha"   :  "*",
-    "express" :  "*"
+  "engines": {
+    "node": "0.10.x"
   },
   "license": "BSD",
   "author": "Chad Norwood <chad@chadnorwood.com>"
