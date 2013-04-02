@@ -3,49 +3,52 @@ driving_time
 
 An example of how to run background tasks in heroku using javascript and phatomjs.
 
-Specifically this shows how to use phantom.js (headless browswer) to 
+Specifically this shows how to use [phantom.js](http://phantomjs.org/)
+(headless browswer) to 
 
-1. Fetch a page: google directions between any two addresses
-1. Extract data out: the driving time including traffic
-1. Store that data in stathat so you can see how driving times fluctuate over the day.
-
+1. Fetch a page. For example, google directions between any two addresses
+1. Extract data. For example, the driving time including traffic
+1. Store that data in stathat. For example,
+[view driving times between Chicago Bean and O'Hare](http://chadn.github.com/driving_time/ord.html)
 
 ## Setup
 
-Before getting started, you must
+Before getting started, you must have
 
-1. Have a free stathat account ([create](https://stathat.com/sign_in/))
-1. Have a free heroku account (create)
-1. Installed heroku toolbelt locally
-1. Installed git locally
+1. A free stathat account ([create](https://stathat.com/sign_in/))
+1. A free heroku account ([sign up](http://www.heroku.com/))
+1. Locally installed heroku toolbelt 
+1. Locally installed git ([setup git and github](https://help.github.com/articles/set-up-git))
+1. Locally installed phantomjs ([download and install](http://phantomjs.org/download.html))
 
-### Setup GIT
+
+### Setup Git 
 
 First, clone this git repository
 
 	$ git clone git://github.com/chadn/driving_time.git
 
-Make sure phantom is working
+Make sure phantomjs is working.
 
+	$ cd driving_time
 	$ phantomjs bin/phantom.hello.js
 	Hello, world!
 
+Copy and Edit the config file, using your stathat info and your addresses.
 
-Edit the code to use your stathat info and your commute addresses
-(or any 2 addresses you want to measure traffic time between)
-
-	$ cd xx && open bin/xxxx.js
-	
+	$ cp conf/commute.ord.js conf/commute.js
+	$ open conf/commute.js
 
 Commit those changes to git
 
-	$ git add . 
+	$ git add conf/commute.js
 	$ git commit
 
 ### Setup Heroku
 
-Next, create a heroku app which will put the commute times into stathat.
-I use `node-worker` for the heroku app name, you need to choose your own name.
+Now we'll create a heroku app, and set up cron-like tasks to accomplish our gaol.
+
+I use `node-worker` for the heroku app name, you will need to choose your own name.
 
 	$ heroku apps:create node-worker
 	Creating node-worker... done, stack is cedar
@@ -56,7 +59,7 @@ Test that it works, it should take a few seconds to run.
 
 	$ git push heroku master
 	...
-	$ heroku run node_modules/phantomjs/bin/phantomjs bin/phantom.commute.js
+	$ heroku run node_modules/phantomjs/bin/phantomjs bin/phantom.commute.js conf/commute.js
 
 Assuming you see 'success' in the output, and no lines with 'error',
 everything is working so far!
@@ -75,24 +78,25 @@ Now add and configure the heroku scheduler so it can be run every 10 mins
 That last line should open your browser where you add your job.  In the browser,
 click `Add Job...`, choose frequency of every 10 mins, and enter this as the Task:
 
-	$ node_modules/phantomjs/bin/phantomjs bin/phantom.commute.js
+	$ node_modules/phantomjs/bin/phantomjs bin/phantom.commute.js conf/commute.js
 
-Note the above is the same thing we typed after `heroku run` above. See how easy that is?
+Note that is the same thing we typed after `heroku run` previously. See how easy that is?
 
 ### Confirm Setup
 
 Lastly, confirm everything is working.  
 
-First we'll just use heroku to tail the log lines.
-When you created the scheduler task in the
-[browser](https://heroku-scheduler.herokuapp.com/dashboard),
-you can see `Last Run` and `Next Run`.
-Once it runs, you should see output in the logs 
+First we'll just use heroku to tail the log lines.  
 
 	$ heroku logs -t -n 100
 
+The above statement might not show much if your task has not run yet.
+To check when the task runs, look for `Last Run` and `Next Run` in the
+[scheduler dashboard](https://heroku-scheduler.herokuapp.com/dashboard).
+Once it runs, you should see output in the logs.
+
 Additionally you can check the logs from your browser, too.
-Just add the papertrail addons
+Just add the papertrail addon.
 
 	$ heroku addons:add papertrail
 	Adding papertrail on node-worker... done, v5 (free)
@@ -103,13 +107,17 @@ You can now access the logs from a browser.  Click on the papertrail addon
 from your app's dashboard.  Here's the dashboard for my node-worker
 https://dashboard.heroku.com/apps/node-worker/resources
 
+## BONUS
 
-## Other profilers
+1. Create more conf/*.js files, commit, push to heroku, and add task to scheduler.
+1. Publish your code to github 
+[Sign Up](https://help.github.com/articles/set-up-git) or just 
+[Create Repository](https://help.github.com/articles/create-a-repo)
+1. [Create a html page in github](https://help.github.com/categories/20/articles)
 
-If using heroku, newrelic is also one of my favorites.  Definitely try them out for profiling and monitoring.
+## Notes
 
-A list of 
-
+Tested on Mac OSX 10.8 and heroku cedar (Ubuntu linux 10.04)
 
 
 
