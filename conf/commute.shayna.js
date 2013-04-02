@@ -1,6 +1,6 @@
 // config file for bin/phantom.commute.js
 
-var stathat_email = process.env.STATHAT_EMAIL || '____your____@__email___.com'
+var stathat_email = require('system').env.STATHAT_EMAIL || '____your____@__email___.com';
 var stathatBase = 'https://api.stathat.com/ez?email=' + stathat_email;
 
 var urls = [{
