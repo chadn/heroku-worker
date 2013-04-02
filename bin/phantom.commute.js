@@ -5,7 +5,7 @@
  */
 
 
-var page = require('webpage').create();
+var webpage = require('webpage');
 var args = require('system').args;
 
 
@@ -67,6 +67,7 @@ function getTimes(uo) {
 		next();
 		return;
 	}
+	page = webpage.create();
 	page.open(uo.route, function (status) {
 		var now = new Date();
 		if (status !== 'success') {
@@ -88,6 +89,8 @@ function getTimes(uo) {
 			console.log(now.getTime() +' Error evaluating html for '+ uo.route +' -- '+ time);
 			url = uo.stathatError;
 		}
+		page.close();
+		page = webpage.create();
 		page.open(url, function (status2) {
 			now = new Date();
 			console.log(now.getTime() +' '+ status2 + ' ' + url);
