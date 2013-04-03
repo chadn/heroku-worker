@@ -114,21 +114,26 @@ function getTimes(uo) {
 }
 
 function pageEvaluate() {
+	var ii, m, hours;
 	
 	// '#altroute_0 .altroute-aux span' == \d mins
-	var m = document.getElementById('altroute_0').innerHTML;
-	m = m.match(/traffic[^\d]*(\d+)\s+mins/i);
-	if (m && m[1]) {
-		return parseInt( m[1] );
+	var html = document.getElementById('altroute_0').innerHTML;
+
+	// try to match in the following order:
+	var regexs = [
+		/traffic[^\d]*(\d+)\s+hour[^\d]*(\d+)\s+mins/i, // In current traffic: 1 hour 4 mins
+		/traffic[^\d]*(\s+)(\d+)\s+mins/i,
+		/(\d+)\s+hour[^\d]*(\d+)\s+mins/i, // no traffic info, so just get time
+		/(\s+)(\d+)\s+mins/i
+	]
+	for (ii=0; ii<regexs.length; ii++) {
+		m = html.match(regexs[ii]);
+		if (m && m[1]) {
+			hours = parseInt( m[1] ) || 0;
+			return parseInt( m[2] ) + (hours * 60);
+		}
 	}
-	// Maybe its like this: In current traffic: 1 hour 4 mins
-	m = document.getElementById('altroute_0').innerHTML;
-	m = m.match(/traffic[^\d]*(\d+)\s+hour[^\d]*(\d+)\s+mins/i);
-	if (m && m[1]) {
-		return parseInt( m[2] ) + parseInt( m[1] ) * 60;
-	} else {
-		return 'Fixme: '+ document.getElementById('altroute_0').innerHTML;
-	}
+	return 'Fixme: '+ html;
 }
 /*/
 var links = page.evaluate(function() {
