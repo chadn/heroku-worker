@@ -42,7 +42,7 @@ function next() {
 		setTimeout(function(){
 			getTimes(uo);
 		}, waitMs);
-		console.log('Waiting '+ waitMs +'ms, Retries remaining:'+ uo.retries +', for: '+ uo.urlSuccess);
+		console.log('Waiting '+ waitMs +'ms, Retries remaining:'+ uo.retries +', for: '+ uo.name);
 	} else {
 		getTimes(uo);
 	}
@@ -54,10 +54,10 @@ function retry(uo) {
 		uo.retries--;
 	}
 	if (uo.retries > 0) {
-		console.log('Will Retry ('+ uo.retries +' retries remaining) for stathat:'+ uo.urlSuccess);
+		console.log('Will Retry ('+ uo.retries +' retries remaining) for stathat:'+ uo.name);
 		conf.urls.push(uo);
 	} else {
-		console.log(now.getTime() +' No more retries, aborting: ' + uo.urlSuccess);
+		console.log(now.getTime() +' No more retries, aborting: ' + uo.name);
 	}
 }
 
@@ -71,45 +71,40 @@ function getTimes(uo) {
 	page.open(uo.route, function (status) {
 		var now = new Date();
 		if (status !== 'success') {
-			console.log(now.getTime() +' '+ status +' '+ uo.route +' -- '+ uo.urlSuccess);
+			console.log(now.getTime() +' '+ status +' '+ uo.route +' -- '+ uo.name);
 			retry(uo);
+			page.close();
 			next();
 			return;
 		}
 		
 		// success! now extract driving time in traffic
-		var url;
+		var ii, urls;
 		var time = page.evaluate(pageEvaluate);
+		page.close();
 
-		if (typeof time === 'number') {
-			url = uo.urlSuccess + time;
+		var evalSuccess = typeof time === 'number';
+		if (evalSuccess) {
+			console.log(now.getTime() +' Success evaluating html for '+ uo.route +' -- '+ time);
+			urls = uo.urlSuccess;
 
 		} else {
-			// time should be a string
 			console.log(now.getTime() +' Error evaluating html for '+ uo.route +' -- '+ time);
-			url = uo.urlError;
+			urls = uo.urlError;
 		}
-		page.close();
-		page = webpage.create();
-		page.open(url, function (status2) {
-			now = new Date();
-			console.log(now.getTime() +' '+ status2 + ' ' + url);
+		if (typeof urls === 'string') {
+			urls = [urls];
+		}
 
-			var jo;
-			if (status2 !== 'success') {
-				retry(uo);
-			} else {
-				try {
-					jo = JSON.parse(page.plainText);
-				} catch (e) {
-				}
-			}
-			if (!(jo && jo.status == 200)) {
-				console.log(now.getTime() +' Unexpected response, will retry. ' + url + ' '+ page.plainText);
-				retry(uo);
-			}
+		// note that we don't wait for responses from postResults, but we delay next()
+		for (ii = 0; ii < urls.length; ii++) {
+			postResults(uo, urls[ii] + time);
+			/*/
+			/*/
+		}
+		setTimeout(function(){
 			next();
-		});
+		}, 2000); // wait 2 secs
 	});
 }
 
@@ -134,6 +129,32 @@ function pageEvaluate() {
 		}
 	}
 	return 'Fixme: '+ html;
+}
+function postResults(uo, url) {
+	var page = webpage.create();
+	var now = new Date();
+	//console.log(now.getTime() +' Trying: ' + url);
+	page.open(url, function (status2) {
+		page.close();
+		now = new Date();
+		//console.log(now.getTime() +' '+ status2 + ' ' + url);
+
+		var jo;
+		if (status2 === 'success') {
+			try {
+				jo = JSON.parse(page.plainText);
+			} catch (e) {
+			}
+		}
+		if (jo && (jo.id || jo.status == 200)) {
+			console.log(now.getTime() +' postResults Success ' + url);
+
+		} else {
+			console.log(now.getTime() +' postResults got Unexpected response, will retry. ' + url + ' '+ page.plainText);
+			retry(uo);
+		}
+	});
+	
 }
 /*/
 var links = page.evaluate(function() {
