@@ -7,28 +7,28 @@ var urls = [{
 	route: 'https://maps.google.com/maps?hl=en'
 	  + '&saddr=2733+N+Troy+St,+Chicago,+IL'
 	  + '&daddr=2150+S+Canalport+Ave,+Chicago,+IL+60608,+USA',
-	stathatValue: stathatBase + '&stat=To+Shayna+Studio&value=',
-	stathatError: stathatBase + '&stat=To+Shayna+Studio+Errors&count=1'
+	urlSuccess: stathatBase + '&stat=To+Shayna+Studio&value=',
+	urlError: stathatBase + '&stat=To+Shayna+Studio+Errors&count=1'
 },{
 	route: 'https://maps.google.com/maps?hl=en'
 	  + '&daddr=2733+N+Troy+St,+Chicago,+IL'
 	  + '&saddr=2150+S+Canalport+Ave,+Chicago,+IL+60608,+USA',
-	stathatValue: stathatBase + '&stat=From+Shayna+Studio&value=',
-	stathatError: stathatBase + '&stat=From+Shayna+Studio+Errors&count=1'
+	urlSuccess: stathatBase + '&stat=From+Shayna+Studio&value=',
+	urlError: stathatBase + '&stat=From+Shayna+Studio+Errors&count=1'
 
 
 },{
 	route: 'https://maps.google.com/maps?hl=en'
 	  + '&saddr=2733+N+Troy+St,+Chicago,+IL'
 	  + '&daddr=3150+Commercial+Ave,+Northbrook,+IL+60608,+USA',
-	stathatValue: stathatBase + '&stat=To+Optics+Planet&value=',
-	stathatError: stathatBase + '&stat=To+Optics+Planet+Errors&count=1'
+	urlSuccess: stathatBase + '&stat=To+Optics+Planet&value=',
+	urlError: stathatBase + '&stat=To+Optics+Planet+Errors&count=1'
 },{
 	route: 'https://maps.google.com/maps?hl=en'
 	  + '&daddr=2733+N+Troy+St,+Chicago,+IL'
 	  + '&saddr=3150+Commercial+Ave,+Northbrook,+IL+60608,+USA',
-	stathatValue: stathatBase + '&stat=From+Optics+Planet&value=',
-	stathatError: stathatBase + '&stat=From+Optics+Planet+Errors&count=1'
+	urlSuccess: stathatBase + '&stat=From+Optics+Planet&value=',
+	urlError: stathatBase + '&stat=From+Optics+Planet+Errors&count=1'
 }];
 
 

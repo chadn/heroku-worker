@@ -42,7 +42,7 @@ function next() {
 		setTimeout(function(){
 			getTimes(uo);
 		}, waitMs);
-		console.log('Waiting '+ waitMs +'ms, Retries remaining:'+ uo.retries +', for: '+ uo.stathatValue);
+		console.log('Waiting '+ waitMs +'ms, Retries remaining:'+ uo.retries +', for: '+ uo.urlSuccess);
 	} else {
 		getTimes(uo);
 	}
@@ -54,10 +54,10 @@ function retry(uo) {
 		uo.retries--;
 	}
 	if (uo.retries > 0) {
-		console.log('Will Retry ('+ uo.retries +' retries remaining) for stathat:'+ uo.stathatValue);
+		console.log('Will Retry ('+ uo.retries +' retries remaining) for stathat:'+ uo.urlSuccess);
 		conf.urls.push(uo);
 	} else {
-		console.log(now.getTime() +' No more retries, aborting: ' + uo.stathatValue);
+		console.log(now.getTime() +' No more retries, aborting: ' + uo.urlSuccess);
 	}
 }
 
@@ -71,7 +71,7 @@ function getTimes(uo) {
 	page.open(uo.route, function (status) {
 		var now = new Date();
 		if (status !== 'success') {
-			console.log(now.getTime() +' '+ status +' '+ uo.route +' -- '+ uo.stathatValue);
+			console.log(now.getTime() +' '+ status +' '+ uo.route +' -- '+ uo.urlSuccess);
 			retry(uo);
 			next();
 			return;
@@ -82,12 +82,12 @@ function getTimes(uo) {
 		var time = page.evaluate(pageEvaluate);
 
 		if (typeof time === 'number') {
-			url = uo.stathatValue + time;
+			url = uo.urlSuccess + time;
 
 		} else {
 			// time should be a string
 			console.log(now.getTime() +' Error evaluating html for '+ uo.route +' -- '+ time);
-			url = uo.stathatError;
+			url = uo.urlError;
 		}
 		page.close();
 		page = webpage.create();
