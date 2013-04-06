@@ -64,7 +64,9 @@ Test that it works, it should take a few seconds to run.
 Assuming you see 'success' in the output, and no lines with 'error',
 everything is working so far!
 
-Now add and configure the heroku scheduler so it can be run every 10 mins
+### Setup Heroku Scheduler
+
+Now add and configure the heroku scheduler so it can be run every 5 mins
 
 	$ heroku addons:add scheduler:standard
 	Adding scheduler:standard on node-worker... done, v4 (free)
@@ -81,6 +83,11 @@ click `Add Job...`, choose frequency of every 10 mins, and enter this as the Tas
 	$ node_modules/phantomjs/bin/phantomjs bin/phantom.commute.js conf/commute.js
 
 Note that is the same thing we typed after `heroku run` previously. See how easy that is?
+
+To get it to run every 5 mins, you must wait exactly 5 mins after you entered the last 10 min task,
+and enter the same task again.  Now you have 2 identical tasks running every 10 mins, 5 mins apart,
+which is the same as running the task every 5 mins. 
+
 
 ### Confirm Setup
 
