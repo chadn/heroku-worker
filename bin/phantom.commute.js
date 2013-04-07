@@ -24,7 +24,7 @@ function init() {
 		//console.log('phantom.libraryPath',phantom.libraryPath);
 		phantom.exit();
 	} else {
-		console.log('Starting, MAX_RETRIES:'+ conf.MAX_RETRIES +', number urls:'+ conf.urls.length);
+		console.log((new Date()).getTime() + ' Starting, MAX_RETRIES:'+ conf.MAX_RETRIES +', number urls:'+ conf.urls.length);
 	}
 	next()
 }
