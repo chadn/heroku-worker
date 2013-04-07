@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>AAPL Stock Price</title>
+  <title>O'Hare - Downtown, Driving Time</title>
   <style>
   </style>
   <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
@@ -14,19 +14,19 @@
 </head>  
 <body>
   <!-- 
+  -->
   <h1>Commuter Driving times, including Traffic<br/>Between O'Hare Airport (ORD) & Chicago Bean (downtown)</h1>
   <p>Based on <a href='https://github.com/chadn/driving_time'>driving_time code</a> and <a
      href="https://maps.google.com/maps?hl=en&saddr=Chicago+O'Hare+International+Airport,+10000+West+O'Hare+Avenue,+Chicago,+IL&daddr=Chicago+Bean,+55+North+Michigan+Avenue,+Chicago,+IL+60601"
     >Google Maps</a> 
   </p>
-  -->
-  <a href='http://jsfiddle.net/gh/get/jquery/1.7.2/highslide-software/highcharts.com/tree/master/samples/stock/demo/basic-line/'
-  >Highcharts.com jsfiddle of highstock</a>
+
 
   <div id="container" style="height: 500px; min-width: 500px"></div>
+  Above chart made with <a href='http://www.highcharts.com/products/highstock'>highstock.js</a>
+  
   <script>
-  //http://api-sails.herokuapp.com/driving_time/?t=OHare-To-Chicago-Bean
-  //http://api-sails.herokuapp.com/driving_time/?t=OHare-From-Chicago-Bean
+  //http://jsfiddle.net/gh/get/jquery/1.7.2/highslide-software/highcharts.com/tree/master/samples/stock/demo/basic-line
   
 $(function() {
 
@@ -37,23 +37,36 @@ $(function() {
         selected : 1
       },
       title : {
-        text : 'AAPL Stock Price'
+        text : 'Driving Time, in mins, Between OHare and Chicago Bean'
       },
       series : series
     });
   }
   
+  function buildSeries(rawData) {             
+    // highcharts wants series data like this: [[1144627200000,32.50], [1144627500000,35.50]]
+    var data = [];
+    var epochSecs;
+    for (var ii=0; ii < rawData.length; ii++) {
+      epochSecs = Date.parse(rawData[ii].createdAt);
+      data.push([epochSecs, rawData[ii].mins]);
+    }
+    return data;
+  }
+
   $.when(
-    $.getJSON('http://api-sails.herokuapp.com/driving_time/?t=OHare-To-Chicago-Bean&callback=?'),
-    $.getJSON('http://www.highcharts.com/samples/data/jsonp.php?filename=aapl-c.json&callback=?')
+    $.getJSON('http://api-sails.herokuapp.com/driving_time/?t=OHare-To-Chicago-Bean'),
+    $.getJSON('http://api-sails.herokuapp.com/driving_time/?t=OHare-From-Chicago-Bean')
+    
   ).done(function(a1,  a2){
-    console.log('done x:', a1, a2);
+
+    console.log('done getJSON:', a1, a2);
     plotChart([{
-      name : 'AAPL',
-      data : a2[0],
-      tooltip: {
-        valueDecimals: 2
-      }
+      name : 'To Bean',
+      data : buildSeries(a1[0])
+    }, {
+      name : 'From Bean',
+      data : buildSeries(a2[0])
     }])
   });
 
