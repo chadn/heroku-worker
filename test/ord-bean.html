@@ -30,7 +30,7 @@
   
 $(function() {
 
-  // Create the chart with no data
+  // Create the chart 
   function plotChart(series) {
     $('#container').highcharts('StockChart', {
       rangeSelector : {
@@ -42,12 +42,15 @@ $(function() {
       series : series
     });
   }
-
-  $.getJSON('http://www.highcharts.com/samples/data/jsonp.php?filename=aapl-c.json&callback=?', function(data) {
-    console.log('getJSON data length:', data.length, data[0]);
+  
+  $.when(
+    $.getJSON('http://api-sails.herokuapp.com/driving_time/?t=OHare-To-Chicago-Bean&callback=?'),
+    $.getJSON('http://www.highcharts.com/samples/data/jsonp.php?filename=aapl-c.json&callback=?')
+  ).done(function(a1,  a2){
+    console.log('done x:', a1, a2);
     plotChart([{
       name : 'AAPL',
-      data : data,
+      data : a2[0],
       tooltip: {
         valueDecimals: 2
       }
