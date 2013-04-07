@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>ORD Driving Times</title>
+  <title>AAPL Stock Price</title>
   <style>
   </style>
   <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
@@ -28,32 +28,39 @@
   //http://api-sails.herokuapp.com/driving_time/?t=OHare-To-Chicago-Bean
   //http://api-sails.herokuapp.com/driving_time/?t=OHare-From-Chicago-Bean
   
+$(function() {
 
-  $(function() {
+  // Create the chart with no data
+  function plotChart(series) {
+    $('#container').highcharts('StockChart', {
+      rangeSelector : {
+        selected : 1
+      },
+      title : {
+        text : 'AAPL Stock Price'
+      },
+      series : series
+    });
+  }
 
-  	$.getJSON('http://www.highcharts.com/samples/data/jsonp.php?filename=aapl-c.json&callback=?', function(data) {
-  		// Create the chart
-  		$('#container').highcharts('StockChart', {
-
-  			rangeSelector : {
-  				selected : 1
-  			},
-
-  			title : {
-  				text : 'AAPL Stock Price'
-  			},
-
-  			series : [{
-  				name : 'AAPL',
-  				data : data,
-  				tooltip: {
-  					valueDecimals: 2
-  				}
-  			}]
-  		});
-  	});
-
+  $.getJSON('http://www.highcharts.com/samples/data/jsonp.php?filename=aapl-c.json&callback=?', function(data) {
+    console.log('getJSON data length:', data.length, data[0]);
+    plotChart([{
+      name : 'AAPL',
+      data : data,
+      tooltip: {
+        valueDecimals: 2
+      }
+    }])
   });
+
+});
+
+/*/
+
+http://api.highcharts.com/highstock#Series.update()
+http://jsfiddle.net/gh/get/jquery/1.7.2/highslide-software/highcharts.com/tree/master/samples/highcharts/members/series-update/
+/*/
   </script>
   
 </body>
