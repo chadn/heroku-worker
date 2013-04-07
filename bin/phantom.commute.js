@@ -123,7 +123,7 @@ function pageEvaluate() {
 	]
 	for (ii=0; ii<regexs.length; ii++) {
 		m = html.match(regexs[ii]);
-		if (m && m[1]) {
+		if (m && m.length > 1) {
 			hours = parseInt( m[1] ) || 0;
 			return parseInt( m[2] ) + (hours * 60);
 		}
