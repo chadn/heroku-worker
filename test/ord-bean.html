@@ -1,0 +1,61 @@
+<!DOCTYPE html> 
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ORD Driving Times</title>
+  <style>
+  </style>
+  <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+  <script src="http://code.jquery.com/jquery-migrate-1.1.1.min.js"></script>
+  <script src="http://code.highcharts.com/stock/highstock.js"></script>
+  <script src="http://code.highcharts.com/stock/modules/exporting.js"></script>
+
+</head>  
+<body>
+  <!-- 
+  <h1>Commuter Driving times, including Traffic<br/>Between O'Hare Airport (ORD) & Chicago Bean (downtown)</h1>
+  <p>Based on <a href='https://github.com/chadn/driving_time'>driving_time code</a> and <a
+     href="https://maps.google.com/maps?hl=en&saddr=Chicago+O'Hare+International+Airport,+10000+West+O'Hare+Avenue,+Chicago,+IL&daddr=Chicago+Bean,+55+North+Michigan+Avenue,+Chicago,+IL+60601"
+    >Google Maps</a> 
+  </p>
+  -->
+  <a href='http://jsfiddle.net/gh/get/jquery/1.7.2/highslide-software/highcharts.com/tree/master/samples/stock/demo/basic-line/'
+  >Highcharts.com jsfiddle of highstock</a>
+
+  <div id="container" style="height: 500px; min-width: 500px"></div>
+  <script>
+  //http://api-sails.herokuapp.com/driving_time/?t=OHare-To-Chicago-Bean
+  //http://api-sails.herokuapp.com/driving_time/?t=OHare-From-Chicago-Bean
+  
+
+  $(function() {
+
+  	$.getJSON('http://www.highcharts.com/samples/data/jsonp.php?filename=aapl-c.json&callback=?', function(data) {
+  		// Create the chart
+  		$('#container').highcharts('StockChart', {
+
+  			rangeSelector : {
+  				selected : 1
+  			},
+
+  			title : {
+  				text : 'AAPL Stock Price'
+  			},
+
+  			series : [{
+  				name : 'AAPL',
+  				data : data,
+  				tooltip: {
+  					valueDecimals: 2
+  				}
+  			}]
+  		});
+  	});
+
+  });
+  </script>
+  
+</body>
+</html>
+
