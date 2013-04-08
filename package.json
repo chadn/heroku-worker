@@ -5,9 +5,16 @@
   "dependencies": {
     "phantomjs"     :  "*"
   },
+  "scripts": {
+    "test": "mocha --reporter spec test/*.test.js"
+  },
+  "devDependencies": {
+    "mocha"         :  "*"
+  },
   "engines": {
     "node": "0.10.x"
   },
+  "readmeFilename": "README.md",
   "license": "BSD",
   "author": "Chad Norwood <chad@chadnorwood.com>"
 }
