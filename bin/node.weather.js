@@ -105,13 +105,18 @@ function parseDay(day) {
 	ao.day = normalizeEpochMs(day.date.epoch*1000)/1000;
 	ao.minVal = day.low.fahrenheit;
 	ao.maxVal = day.high.fahrenheit;
+	ao.hVal = day.avehumidity;
 	
 	//daysAhead = Math.floor(dayOffset + (ao.day*1000 - nowMs) / (1000*60*60*24));
 	daysAhead = (ao.day*1000 - nowMs) / (1000*60*60*24);
 	ao.minKey = 'min'+ daysAhead +'d';
 	ao.maxKey = 'max'+ daysAhead +'d';
+	ao.hKey = 'humd'+ daysAhead +'d';
 	
-	ao.str = 'day='+ ao.day +'&'+ ao.minKey +'='+ ao.minVal +'&'+ ao.maxKey +'='+ ao.maxVal;
+	ao.str = 'day='+ ao.day 
+		+'&'+ ao.hKey +'='+ ao.hVal 
+		+'&'+ ao.minKey +'='+ ao.minVal 
+		+'&'+ ao.maxKey +'='+ ao.maxVal;
 	return ao;
 }
 
