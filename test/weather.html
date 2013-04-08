@@ -1,0 +1,148 @@
+<!DOCTYPE html> 
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Weather Forecasts</title>
+  <style>
+  .highchrt {
+    height: 500px; min-width: 500px;
+  }
+  </style>
+  <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+  <script src="http://code.jquery.com/jquery-migrate-1.1.1.min.js"></script>
+  <script src="http://code.highcharts.com/stock/highstock.js"></script>
+  <script src="http://code.highcharts.com/stock/modules/exporting.js"></script>
+
+</head>  
+<body>
+
+  <div id="container1" class='highchrt'></div>
+  <div id="container2" class='highchrt'></div>
+  Above chart made with <a href='http://www.highcharts.com/products/highstock'>highstock.js</a>
+  
+  <script>
+  //http://jsfiddle.net/gh/get/jquery/1.7.2/highslide-software/highcharts.com/tree/master/samples/stock/demo/basic-line
+  
+$(function() {
+
+  // Create the chart 
+  function plotChart(selector, series) {
+    $(selector).highcharts('StockChart', {
+      rangeSelector : {
+        selected : 1
+      },
+      title : {
+        text : 'Temp Forecast for Chicago'
+      },
+      series : series
+    });
+  }
+  
+  function buildSeries(rawData, key) {
+    // highcharts wants series data like this: [[1144627200000,32.50], [1144627500000,35.50]]
+    var data = [];
+    var epochMs, val;
+    for (var ii=0; ii < rawData.length; ii++) {
+      //epochMs = Date.parse(rawData[ii].createdAt);
+      epochMs = rawData[ii].dt * 1000;
+      val = rawData[ii].main ? rawData[ii].main[key] : rawData[ii][key];
+      data.push([epochMs, val]);
+    }
+    return data;
+  }
+
+  function parseWunderground(rawData) {
+    var high = [];
+    var low = [];
+    var days = rawData.forecast.simpleforecast.forecastday;
+    var epochMs, val;
+    for (var ii=0; ii < days.length; ii++) {
+      epochMs = days[ii].date.epoch * 1000;// "1365390000"
+      high.push([epochMs, parseFloat(days[ii].high.fahrenheit) ]);
+      low.push([epochMs, parseFloat(days[ii].low.fahrenheit) ]);
+    }
+    console.log('low:',low)
+    return [{
+      name : 'high',
+      data : high
+    }, {
+      name : 'low',
+      data : low
+    }];
+  }
+
+/*/
+http://openweathermap.org/city/4887398
+
+http://api.openweathermap.org/data/2.2/forecast/city/4887398?mode=daily_compact
+$.getJSON('http://api.openweathermap.org/data/2.2/forecast/city/4887398'),
+
+121b8928ea8cca08
+http://api.wunderground.com/api/121b8928ea8cca08/forecast10day/q/CA/San_Francisco.json
+
+
+each day
+{
+  loc: 'chicago',
+  loc: 'chicago.Updating',
+  for: <epochSecs>,
+  min0d: <tempFahrenheit>
+  min1d:
+  min<N>d:
+  max0d:
+  max1d:
+  max<N>d:
+}
+
+
+ 
+/*/
+
+  $.when(
+    $.getJSON('http://api.openweathermap.org/data/2.1/forecast/city/4887398?units=imperial&type=json&callback=?'),
+    $.getJSON('http://api.openweathermap.org/data/2.1/forecast/city/4887398?units=imperial&mode=daily_compact&callback=?'),
+    $.getJSON('http://api.wunderground.com/api/121b8928ea8cca08/forecast10day/q/IL/Chicago.json?callback=?')
+    
+  ).done(function(a1, a2, a3){
+
+    console.log('done getJSON:', a1, a2, a3);
+    
+    plotChart('#container1', [{
+      name : 'temp_min',
+      data : buildSeries(a1[0].list, 'temp_min')
+    }, {
+      name : 'temp_max',
+      data : buildSeries(a1[0].list, 'temp_max')
+    }]);
+    /*/ 
+    plotChart('#container2', [{
+      name : 'temp',
+      data : buildSeries(a2[0].list, 'temp')
+    }, {
+      name : 'night',
+      data : buildSeries(a2[0].list, 'night')
+    }, {
+      name : 'eve',
+      data : buildSeries(a2[0].list, 'eve')
+    }, {
+      name : 'morn',
+      data : buildSeries(a2[0].list, 'morn')
+    }])
+    /*/
+    plotChart('#container2', parseWunderground(a3[0]));
+
+  });
+
+});
+
+/*/
+
+http://api.highcharts.com/highstock#Series.update()
+http://jsfiddle.net/gh/get/jquery/1.7.2/highslide-software/highcharts.com/tree/master/samples/highcharts/members/series-update/
+/*/
+  </script>
+  
+</body>
+</html>
+
