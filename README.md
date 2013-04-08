@@ -127,4 +127,6 @@ https://dashboard.heroku.com/apps/node-worker/resources
 Tested on Mac OSX 10.8 and heroku cedar (Ubuntu linux 10.04)
 
 
+[![githalytics.com alpha](https://cruel-carlota.pagodabox.com/6998e185dd899d8769fe3fa9941aef79 "githalytics.com")](http://githalytics.com/chadn/driving_time)
+
 
