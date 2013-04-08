@@ -7,7 +7,7 @@
 
 var webpage = require('webpage');
 var args = require('system').args;
-
+var commute = require('../lib/commute');
 
 var configFile = args[1] || '../conf/commute.ord.js';
 
@@ -80,7 +80,7 @@ function getTimes(uo) {
 		
 		// success! now extract driving time in traffic
 		var ii, urls;
-		var time = page.evaluate(pageEvaluate);
+		var time = page.evaluate(commute.findMins);
 		page.close();
 
 		var evalSuccess = typeof time === 'number';
@@ -108,28 +108,6 @@ function getTimes(uo) {
 	});
 }
 
-function pageEvaluate() {
-	var ii, m, hours;
-	
-	// '#altroute_0 .altroute-aux span' == \d mins
-	var html = document.getElementById('altroute_0').innerHTML;
-
-	// try to match in the following order:
-	var regexs = [
-		/traffic[^\d]*(\d+)\s+hour[^\d]*(\d+)\s+mins/i, // In current traffic: 1 hour 4 mins
-		/traffic[^\d]*(\s+)(\d+)\s+mins/i,
-		/(\d+)\s+hour[^\d]*(\d+)\s+mins/i, // no traffic info, so just get time
-		/(\s+)(\d+)\s+mins/i
-	]
-	for (ii=0; ii<regexs.length; ii++) {
-		m = html.match(regexs[ii]);
-		if (m && m.length > 1) {
-			hours = parseInt( m[1] ) || 0;
-			return parseInt( m[2] ) + (hours * 60);
-		}
-	}
-	return 'Fixme: '+ html;
-}
 function postResults(uo, url) {
 	var page = webpage.create();
 	var now = new Date();
