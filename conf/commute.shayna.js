@@ -3,7 +3,7 @@
 var stathat_email = require('system').env.STATHAT_EMAIL || '____your____@__email___.com';
 var stathatBase = 'https://api.stathat.com/ez?email=' + stathat_email;
 
-var apiServer = 'http://api-sails.herokuapp.com/'+ require('system').env.APPROVED_API_KEY;
+var apiServer = 'https://api-sails.herokuapp.com/'+ require('system').env.APPROVED_API_KEY;
 
 var urls = [{
 	name: 'To Shayna Studio',
