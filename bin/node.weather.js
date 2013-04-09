@@ -5,7 +5,7 @@
 /*/
 
 var rest = require('../lib/rest');
-var apiServer = 'http://api-sails.herokuapp.com';
+var apiServer = 'http://api-sails.herokuapp.com/'+ process.env.APPROVED_API_KEY;
 
 
 var UPDATE_HOUR = '12'; // make noon, 12pm exactly, be the time for a given day, and updates happen after this.

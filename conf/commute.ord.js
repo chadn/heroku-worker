@@ -6,6 +6,8 @@
 var stathat_email = require('system').env.STATHAT_EMAIL || '____your____@__email___.com';
 var stathatBase = 'https://api.stathat.com/ez?email=' + stathat_email;
 
+var apiServer = 'http://api-sails.herokuapp.com/'+ require('system').env.APPROVED_API_KEY;
+
 // TODO: optionally pick new source address (saddr) and destination address (daddr)
 // Test URL in browser to make sure address works.
 var urls = [{
@@ -16,11 +18,11 @@ var urls = [{
     + '&daddr=Chicago+Bean,+55+North+Michigan+Avenue,+Chicago,+IL+60601',
   urlSuccess: [
 	stathatBase + "&stat=From+O'Hare+To+Chicago+Bean&value=",
-	'http://api-sails.herokuapp.com/driving_time/create?t=OHare-To-Chicago-Bean&mins='
+	apiServer +'/driving_time/create?t=OHare-To-Chicago-Bean&mins='
 	],
   urlError: [
     stathatBase + "&stat=From+O'Hare+To+Chicago+Bean+Errors&count=1&",
-	'http://api-sails.herokuapp.com/driving_time/create?t=OHare-To-Chicago-Bean-Error&error=error&note='
+	apiServer +'/driving_time/create?t=OHare-To-Chicago-Bean-Error&error=error&note='
 	]
 },{
   name: 'OHare-From-Chicago-Bean',
@@ -29,11 +31,11 @@ var urls = [{
     + '&saddr=Chicago+Bean,+55+North+Michigan+Avenue,+Chicago,+IL+60601',
   urlSuccess: [
 	stathatBase + "&stat=To+O'Hare+From+Chicago+Bean&value=",
-	'http://api-sails.herokuapp.com/driving_time/create?t=OHare-From-Chicago-Bean&mins='
+	apiServer +'/driving_time/create?t=OHare-From-Chicago-Bean&mins='
 	],
   urlError: [
     stathatBase + "&stat=To+O'Hare+From+Chicago+Bean+Errors&count=1&",
-	'http://api-sails.herokuapp.com/driving_time/create?t=OHare-To-Chicago-Bean-Error&error=error&note='
+	apiServer +'/driving_time/create?t=OHare-To-Chicago-Bean-Error&error=error&note='
 	]
 }];
 
