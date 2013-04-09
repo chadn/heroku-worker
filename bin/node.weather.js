@@ -1,11 +1,12 @@
 #!/usr/bin/env node
 /*/
  * This script can be run any number of times during the day.
- * It will only update servers once per day, right after UPDATE_HOUR.
+ * It will only update servers once per day, right after hf.updateHour.
 /*/
 
 var rest = require('../lib/rest');
-
+var HistoricalForecast = require('../lib/HistoricalForecast');
+var hf;
 var apiServer = 'https://api-sails.herokuapp.com/'+ process.env.APPROVED_API_KEY;
 var UPDATE_HOUR = '12'; // make noon, 12pm exactly, be the time for a given day, and updates happen after this.
 
@@ -15,6 +16,13 @@ function init() {
 		console.log(d.getTime() +' node.weather.js skipping, only updating after '+ UPDATE_HOUR);
 		return;
 	}
+	hf = new HistoricalForecast({
+		updateHour: UPDATE_HOUR, // make noon, 12pm exactly, be the precise 'time' for a given day.
+		apiServer: apiServer,
+		getJsonMethod: function(url, cb) {
+			rest.getJSON( url, cb );
+		}
+	});
 	console.log(d.getTime() +' node.weather.js running ');
 	
 	
@@ -64,15 +72,15 @@ function updateApi(apiJsonData, wuJsonData) {
 		
 		// Now change 'chicago.updating' to 'chicago'
 		// for ones that have 'for' no longer in future
-		var nowMs = normalizeEpochMs();
+		var nowMs = hf.normalizeEpochMs();
 		if (epochSecs * 1000 < nowMs) {
-			url = apiServer + '/forecast/update/'+ ids[epochSecs].id +'?loc=chicago';
+			url = hf.opts.apiServer + '/forecast/update/'+ ids[epochSecs].id +'?loc=chicago';
 			rest.getJSON( url, function() {});
 		}
 	}
 
 	for (ii=0; ii < days.length; ii++) {
-		var ao = parseDay(days[ii]);
+		var ao = hf.parseWeatherUndergroundDay(days[ii]);
 		
 		// if 'day' exists, update; else create
 		if (ids[ao.day]) {
@@ -81,11 +89,11 @@ function updateApi(apiJsonData, wuJsonData) {
 				url = '';
 				console.log('already updated, skipping: '+ ao.str);
 			} else {
-				url = apiServer + '/forecast/update/'+ ids[ao.day].id +'?'+ ao.str;
+				url = hf.opts.apiServer + '/forecast/update/'+ ids[ao.day].id +'?'+ ao.str;
 			}
-			//url = apiServer + '/forecast/delete/'+ ids[ao.day].id;
+			//url = hf.opts.apiServer + '/forecast/delete/'+ ids[ao.day].id;
 		} else {
-			url = apiServer + '/forecast/create?loc=chicago.updating&'+ ao.str;
+			url = hf.opts.apiServer + '/forecast/create?loc=chicago.updating&'+ ao.str;
 		}
 		//console.log(url +' '+ (new Date(parseInt(ao.day)*1000)));
 		if (url) {
@@ -95,38 +103,4 @@ function updateApi(apiJsonData, wuJsonData) {
 }
 	
 
-function parseDay(day) {
-	var ao = {};
-	var nowMs = normalizeEpochMs();
-	var daysAhead;
-	var dayOffset = 0.5; // what's a good offset?
-	
-	ao.day = normalizeEpochMs(day.date.epoch*1000)/1000;
-	ao.minVal = day.low.fahrenheit;
-	ao.maxVal = day.high.fahrenheit;
-	ao.hVal = day.avehumidity;
-	
-	//daysAhead = Math.floor(dayOffset + (ao.day*1000 - nowMs) / (1000*60*60*24));
-	daysAhead = (ao.day*1000 - nowMs) / (1000*60*60*24);
-	ao.minKey = 'min'+ daysAhead +'d';
-	ao.maxKey = 'max'+ daysAhead +'d';
-	ao.hKey = 'humd'+ daysAhead +'d';
-	
-	ao.str = 'day='+ ao.day 
-		+'&'+ ao.hKey +'='+ ao.hVal 
-		+'&'+ ao.minKey +'='+ ao.minVal 
-		+'&'+ ao.maxKey +'='+ ao.maxVal;
-	return ao;
-}
-
-// returns the same epoch ms for a given day given any epoch time in that day
-function normalizeEpochMs(epochMs) {
-	var d = epochMs ? new Date(epochMs) : new Date();
-	d.setMilliseconds(0);
-	d.setSeconds(0);
-	d.setMinutes(0);
-	d.setHours(UPDATE_HOUR);
-	//console.log("normalizeEpochMs: ", epochMs, d.getTime(), d);
-	return d.getTime();
-}
 init();

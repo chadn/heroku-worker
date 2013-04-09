@@ -14,26 +14,53 @@
   <script src="http://code.highcharts.com/stock/highstock.js"></script>
   <script src="http://code.highcharts.com/stock/modules/exporting.js"></script>
 
+  <script src="../lib/HistoricalForecast.js"></script>
+  
+
 </head>  
 <body>
-
+  <h1>Historical Forecast Data</h1>
+  <h2>Weather data is currently INCOMPLETE. </h2>
+  <p>Legend: max1d is the max temp forecasted 1 day prior, max2d is the max temp forecasted 2 days prior, etc</p>
   <div id="container1" class='highchrt'></div>
   <div id="container2" class='highchrt'></div>
+  <div id="container3" class='highchrt'></div>
+  <h2>Above charts use my api data, below charts do not. </h2>
+  <div id="container4" class='highchrt'></div>
+  <div id="container5" class='highchrt'></div>
   Above chart made with <a href='http://www.highcharts.com/products/highstock'>highstock.js</a>
   
   <script>
-  //http://jsfiddle.net/gh/get/jquery/1.7.2/highslide-software/highcharts.com/tree/master/samples/stock/demo/basic-line
-  
 $(function() {
+  var hf = HistoricalForecast();
+  var url = 'http://api-sails.herokuapp.com/forecast?loc=chicago';
+  hf.getJson(url, function(err,jsonData){
+    if (err) return;
+    if (0) {
+      return plot(jsonData);
+    }
+    url = 'http://api-sails.herokuapp.com/forecast?loc=chicago.updating';
+    hf.getJson(url, function(err,jsonData2){
+      if (err) return;
+      var apiData = [].concat.apply(jsonData, jsonData2);
+      return plot(apiData);
+    });
+  });
+  
+  function plot(apiData) {
+    plotChart('#container1', 'Max Temp', hf.api2highcharts(apiData, 'max') );
+    plotChart('#container2', 'Min Temp', hf.api2highcharts(apiData, 'min') );
+    plotChart('#container3', 'Humidity', hf.api2highcharts(apiData, 'humd') );
+  }
 
   // Create the chart 
-  function plotChart(selector, series) {
+  function plotChart(selector, title, series) {
     $(selector).highcharts('StockChart', {
       rangeSelector : {
         selected : 1
       },
       title : {
-        text : 'Temp Forecast for Chicago'
+        text : 'Weather Forecast for Chicago, '+ title
       },
       series : series
     });
@@ -64,10 +91,10 @@ $(function() {
     }
     console.log('low:',low)
     return [{
-      name : 'high',
+      name : 'high wunderground',
       data : high
     }, {
-      name : 'low',
+      name : 'low wunderground',
       data : low
     }];
   }
@@ -108,30 +135,21 @@ each day
 
     console.log('done getJSON:', a1, a2, a3);
     
-    plotChart('#container1', [{
-      name : 'temp_min',
+    var wunderground = parseWunderground(a3[0]);
+    var openweathermap = [{
+      name : 'temp_min openweathermap',
       data : buildSeries(a1[0].list, 'temp_min')
     }, {
-      name : 'temp_max',
+      name : 'temp_max openweathermap',
       data : buildSeries(a1[0].list, 'temp_max')
-    }]);
-    /*/ 
-    plotChart('#container2', [{
-      name : 'temp',
-      data : buildSeries(a2[0].list, 'temp')
-    }, {
-      name : 'night',
-      data : buildSeries(a2[0].list, 'night')
-    }, {
-      name : 'eve',
-      data : buildSeries(a2[0].list, 'eve')
-    }, {
-      name : 'morn',
-      data : buildSeries(a2[0].list, 'morn')
-    }])
-    /*/
-    plotChart('#container2', parseWunderground(a3[0]));
-
+    }];
+    var series = [].concat.apply(openweathermap,wunderground);
+    
+    plotChart('#container4', 'openweathermap.org & wunderground.com', series);
+/*/
+    plotChart('#container4', 'openweathermap.org', openweathermap);
+    plotChart('#container5', 'wunderground.com', wunderground);
+/*/
   });
 
 });
