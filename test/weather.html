@@ -25,10 +25,11 @@
   <div id="container1" class='highchrt'></div>
   <div id="container2" class='highchrt'></div>
   <div id="container3" class='highchrt'></div>
-  <h2>Above charts use my api data, below charts do not. </h2>
   <div id="container4" class='highchrt'></div>
   <div id="container5" class='highchrt'></div>
-  Above chart made with <a href='http://www.highcharts.com/products/highstock'>highstock.js</a>
+  <h2>Above charts use my api data, below charts do not. </h2>
+  <div id="container6" class='highchrt'></div>
+  Above charts made with <a href='http://www.highcharts.com/products/highstock'>highstock.js</a>
   
   <script>
 $(function() {
@@ -50,7 +51,9 @@ $(function() {
   function plot(apiData) {
     plotChart('#container1', 'Max Temp', hf.api2highcharts(apiData, 'max') );
     plotChart('#container2', 'Min Temp', hf.api2highcharts(apiData, 'min') );
-    plotChart('#container3', 'Humidity', hf.api2highcharts(apiData, 'humd') );
+    plotChart('#container3', 'Difference in Max Temp', hf.api2highcharts(apiData, 'max', 1) );
+    plotChart('#container4', 'Difference in Min Temp', hf.api2highcharts(apiData, 'min', 1) );
+    plotChart('#container5', 'Humidity', hf.api2highcharts(apiData, 'humd') );
   }
 
   // Create the chart 
@@ -145,11 +148,7 @@ each day
     }];
     var series = [].concat.apply(openweathermap,wunderground);
     
-    plotChart('#container4', 'openweathermap.org & wunderground.com', series);
-/*/
-    plotChart('#container4', 'openweathermap.org', openweathermap);
-    plotChart('#container5', 'wunderground.com', wunderground);
-/*/
+    plotChart('#container6', 'openweathermap.org & wunderground.com', series);
   });
 
 });
