@@ -11,6 +11,7 @@ console.log(' node.weather.js starting up ');
 var hf = new HistoricalForecast({
 	updateHourUTC: 17, // make 5pm UTC, about noon chicago, be the precise 'time' for a given day.
 	apiServer: 'https://api-sails.herokuapp.com/'+ (process.env.APPROVED_API_KEY || ''),
+	wuServer: 'http://api.wunderground.com/api/' + (process.env.WU_API_KEY || ''),
 	getJsonMethod: function(url, cb) {
 		rest.getJSON( url, cb );
 	}
