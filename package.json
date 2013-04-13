@@ -1,5 +1,5 @@
 {
-  "name": "driving_time",
+  "name": "heroku-worker",
   "version": "0.0.1",
   "description": "An example of how to run background tasks in heroku using javascript and phatomjs.",
   "dependencies": {

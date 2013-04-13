@@ -1,15 +1,16 @@
-driving_time
-============
+heroku-worker
+=============
 
-An example of how to run background tasks in heroku using javascript and phatomjs.
+An example of how to run background tasks in heroku using 
+javascript (node.js) and phatomjs, among other things.
 
-Specifically this shows how to use [phantom.js](http://phantomjs.org/)
-(headless browswer) to 
+Specifically [phantom.commute.js](bin/phantom.commute.js) shows how to use 
+[phantom.js](http://phantomjs.org/), a headless browswer, to 
 
-1. Fetch a page. For example, google directions between any two addresses
-1. Extract data. For example, the driving time including traffic
-1. Store that data in stathat. For example,
-[view driving times between Chicago Bean and O'Hare](http://chadn.github.com/driving_time/test/ord.html)
+1. Fetch a page. In this case, google directions between any two addresses
+1. Extract data. In this case, the driving time including traffic
+1. Store that data in stathat.  In this case,
+[view driving times between Chicago Bean and O'Hare](http://chadn.github.com/heroku-worker/test/ord.html)
 
 ## Setup
 
@@ -26,11 +27,11 @@ Before getting started, you must have
 
 First, clone this git repository
 
-	$ git clone git://github.com/chadn/driving_time.git
+	$ git clone git://github.com/chadn/heroku-worker.git
 
 Make sure phantomjs is working.
 
-	$ cd driving_time
+	$ cd heroku-worker
 	$ phantomjs bin/phantom.hello.js
 	Hello, world!
 
@@ -127,6 +128,5 @@ https://dashboard.heroku.com/apps/node-worker/resources
 Tested on Mac OSX 10.8 and heroku cedar (Ubuntu linux 10.04)
 
 
-[![githalytics.com alpha](https://cruel-carlota.pagodabox.com/04e36c54a276a167d5195044df428409 "githalytics.com")](http://githalytics.com/chadn/driving_time)
-
+[![githalytics.com alpha](https://cruel-carlota.pagodabox.com/6b8f3a4d62ca306ca1a8e98726af66ca "githalytics.com")](http://githalytics.com/chadn/heroku-worker)
 
