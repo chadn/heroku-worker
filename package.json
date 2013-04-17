@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "description": "An example of how to run background tasks in heroku using javascript and phatomjs.",
   "dependencies": {
-    "phantomjs"     :  "*"
+    "phantomjs"     :  "1.9.0-1"
   },
   "scripts": {
     "test": "mocha --reporter spec test/*.test.js"
