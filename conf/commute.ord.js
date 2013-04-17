@@ -16,6 +16,7 @@ var urls = [{
   route: 'https://maps.google.com/maps?hl=en'
     + "&saddr=Chicago+O'Hare+International+Airport,+10000+West+O'Hare+Avenue,+Chicago,+IL"
     + '&daddr=Chicago+Bean,+55+North+Michigan+Avenue,+Chicago,+IL+60601',
+  urlSuccessPublicTransit: apiServer +'/driving_time/create?t=OHare-To-Chicago-Bean-PublicTransit&mins=',
   urlSuccess: [
 	stathatBase + "&stat=From+O'Hare+To+Chicago+Bean&value=",
 	apiServer +'/driving_time/create?t=OHare-To-Chicago-Bean&mins='
@@ -29,6 +30,7 @@ var urls = [{
   route: 'https://maps.google.com/maps?hl=en'
     + "&daddr=Chicago+O'Hare+International+Airport,+10000+West+O'Hare+Avenue,+Chicago,+IL"
     + '&saddr=Chicago+Bean,+55+North+Michigan+Avenue,+Chicago,+IL+60601',
+  urlSuccessPublicTransit: apiServer +'/driving_time/create?t=OHare-From-Chicago-Bean-PublicTransit&mins=',
   urlSuccess: [
 	stathatBase + "&stat=To+O'Hare+From+Chicago+Bean&value=",
 	apiServer +'/driving_time/create?t=OHare-From-Chicago-Bean&mins='

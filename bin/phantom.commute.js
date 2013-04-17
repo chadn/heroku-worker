@@ -61,6 +61,9 @@ function retry(uo) {
 	}
 }
 
+function makeArray(x) {
+	return typeof x === 'string' ? [x] : x;
+}
 function getTimes(uo) {
 	if (!(uo && uo.route)) {
 		console.log('getTimes() invalid url obj: ', uo);
@@ -77,34 +80,51 @@ function getTimes(uo) {
 			next();
 			return;
 		}
+		page.onConsoleMessage = function (msg){
+			console.log('onConsoleMessage:', msg);     
+		};   
 		
 		// success! now extract driving time in traffic
 		var ii, urls;
 		var time = page.evaluate(commute.findMins);
+		
+		var publicTransitTime = page.evaluate(commute.findMins, function(){
+			return document.getElementById('dir_atm') ? document.getElementById('dir_atm').innerHTML : '[no dir_atm]'
+		});
+		
 		page.close();
 
 		var evalSuccess = typeof time === 'number';
 		if (evalSuccess) {
 			console.log(now.getTime() +' Success evaluating html for '+ uo.route +' -- '+ time);
-			urls = uo.urlSuccess;
+			urls = makeArray(uo.urlSuccess);
 
 		} else {
 			console.log(now.getTime() +' Error evaluating html for '+ uo.route +' -- '+ time);
-			urls = uo.urlError;
+			urls = makeArray(uo.urlError);
 		}
-		if (typeof urls === 'string') {
-			urls = [urls];
+		// add time to it.
+		urls = urls.map(function(u){return u + time});
+
+		// add publicTransitTime
+		evalSuccess = typeof publicTransitTime === 'number';
+		if (evalSuccess) {
+			console.log(now.getTime() +' Success evaluating html for Public Transit Time -- '+ publicTransitTime);
+			if (uo.urlSuccessPublicTransit) {
+				urls.push(uo.urlSuccessPublicTransit + publicTransitTime);
+			}
+		} else {
+			console.log(now.getTime() +' Error evaluating html for Public Transit Time: '+ publicTransitTime);
 		}
+		//console.log(now.getTime() +' Public Transit Time: '+ publicTransitTime);
 
 		// note that we don't wait for responses from postResults, but we delay next()
 		for (ii = 0; ii < urls.length; ii++) {
-			postResults(uo, urls[ii] + time);
-			/*/
-			/*/
+			postResults(uo, urls[ii]);
 		}
 		setTimeout(function(){
 			next();
-		}, 2000); // wait 2 secs
+		}, 2000); // wait 2 secs before next, in case we must retry
 	});
 }
 
