@@ -25,7 +25,13 @@ describe('with Commute.prototype.findMins', function(){
 		
 		html = ' <span>21.0 mi</span>, <span>7 hours 0 mins</span>';
 		assert.equal(420, commute.findMins(html));
-		
-	})
+	});
+
+	it('should handle html from a function', function(){
+		assert.equal(49, commute.findMins(function(){
+			// #dir_atm - Public Transit example 
+			return '<div class="altroute-rcol altroute-info">49 mins</div>      Or take <a href="/maps?xx=yy" onclick="return loadUrl(this.href)">Public Transit</a>  <span class="dir-atm-summary no-wrap"> (Subway) </span>'
+		}));
+	});
 
 });
