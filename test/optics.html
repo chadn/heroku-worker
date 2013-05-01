@@ -41,6 +41,12 @@
   // highcharts graph
 $(function() {
 
+  Highcharts.setOptions({
+    global: {
+      useUTC: false
+    }
+  });
+
   // Create the chart 
   function plotChart(series) {
     $('#container').highcharts('StockChart', {
