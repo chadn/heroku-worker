@@ -46,10 +46,10 @@ $(function() {
   function buildSeries(rawData) {             
     // highcharts wants series data like this: [[1144627200000,32.50], [1144627500000,35.50]]
     var data = [];
-    var epochSecs;
+    var epochMs;
     for (var ii=0; ii < rawData.length; ii++) {
-      epochSecs = Date.parse(rawData[ii].createdAt);
-      data.push([epochSecs, rawData[ii].mins]);
+      epochMs = Date.parse(rawData[ii].createdAt);
+      data.push([epochMs, rawData[ii].mins]);
     }
     return data;
   }
