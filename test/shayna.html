@@ -26,7 +26,119 @@ div { margin-top: 20px}
   StatHatEmbed.render({s1: 'LzuM', w: size.w, h: size.h, tf:'day_compare', s2: 'H2jg', title:'To/From Shayna Studio'});
   StatHatEmbed.render({s1: 'H2jg', w: size.w, h: size.h, tf:'day_compare', title:'To Shayna Studio'});
   StatHatEmbed.render({s1: 'LzuM', w: size.w, h: size.h, tf:'day_compare', title:'From Shayna Studio'});
-  
+  </script>
+
+
+  <div id="container" style="height: 500px; min-width: 500px"></div>
+  <div id="container2" style="height: 500px; min-width: 500px"></div>
+  Above chart made with <a href='http://www.highcharts.com/products/highstock'>highstock.js</a>
+
+  <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+  <script src="http://code.jquery.com/jquery-migrate-1.1.1.min.js"></script>
+  <script src="http://code.highcharts.com/stock/highstock.js"></script>
+  <script src="http://code.highcharts.com/stock/modules/exporting.js"></script>
+  <script>
+  // highcharts graph
+$(function() {
+
+  Highcharts.setOptions({
+    global: {
+      useUTC: false
+    }
+  });
+
+  // Create the chart 
+  function plotChart(selector, title, series) {
+    $(selector).highcharts('StockChart', {
+      rangeSelector : {
+        selected : 1
+      },
+      title : {
+        text : 'Driving Time, in mins, '+ title
+      },
+      tooltip:{
+        xDateFormat: '%b %e %a %H:%M' // http://php.net/manual/en/function.strftime.php
+      },
+      series : series
+    });
+  }
+
+  function buildSeries(rawData) {             
+    // highcharts wants series data like this: [[1144627200000,32.50], [1144627500000,35.50]]
+    var data = [];
+    var epochSecs;
+    for (var ii=0; ii < rawData.length; ii++) {
+      epochSecs = Date.parse(rawData[ii].createdAt);
+      data.push([epochSecs, rawData[ii].mins]);
+    }
+    return data;
+  }
+
+  function buildSeries2(rawData, startHour) {
+    var data = [];
+    var startTime =  startHour * 60*60*1000; //  in utc, 23 hrs is 6pm in chicago
+    var hoursInDay = 24 * 60 * 60 * 1000;
+    var windowTime = 10*60*1000; // 10 min window
+    var epochMs;
+    var lastAdded = 0;
+    for (var ii=0; ii < rawData.length; ii++) {
+      epochMs = Date.parse(rawData[ii].createdAt);
+      daily = epochMs % hoursInDay;
+      // only count once per day, starting at startTime, ending before endTime
+      if (epochMs-lastAdded > windowTime
+          && daily > startTime 
+          && daily < (startTime + windowTime)) {
+        console.log('yo', rawData[ii].createdAt, epochMs, daily);
+        data.push([epochMs, rawData[ii].mins]);
+        lastAdded = epochMs;
+      }
+    }
+    return data;
+  }
+
+  $.when(
+    $.getJSON('http://api-sails.herokuapp.com/driving_time/?t=From-Shayna-Studio'),
+    $.getJSON('http://api-sails.herokuapp.com/driving_time/?t=To-Shayna-Studio')
+
+  ).done(function(a1,  a2){
+
+    console.log('done getJSON:', a1, a2);
+
+    plotChart('#container', 'Between Shayna Studio and Logan Sq', [{
+      name : 'From Shayna Studio',
+      data : buildSeries(a1[0])
+    }, {
+      name : 'To Shayna Studio',
+      data : buildSeries(a2[0])
+    }]);
+    
+    plotChart('#container2', 'From Shayna Studio leaving 6pm, 6:30, ...', [{
+      name : 'From Shayna Studio, 6pm',
+      data : buildSeries2(a1[0], 23)
+    }, {
+      name : 'From Shayna Studio, 6:30pm',
+      data : buildSeries2(a1[0], 23.5)
+    }, {
+      name : 'From Shayna Studio, 7pm',
+      data : buildSeries2(a1[0], 0)
+    }, {
+      name : 'From Shayna Studio, 7:30pm',
+      data : buildSeries2(a1[0], 0.5)
+    }, {
+      name : 'From Shayna Studio, 8pm',
+      data : buildSeries2(a1[0], 1)
+    }, {
+      name : 'From Shayna Studio, 8:30pm',
+      data : buildSeries2(a1[0], 1.5)
+    }])
+  });
+
+
+});
+
+
+
+  // GOOGLE ANALYTICS
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
   (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
   m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
