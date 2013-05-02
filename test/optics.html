@@ -31,6 +31,7 @@
 
 
   <div id="container" style="height: 500px; min-width: 500px"></div>
+  <div id="container2" style="height: 500px; min-width: 500px"></div>
   Above chart made with <a href='http://www.highcharts.com/products/highstock'>highstock.js</a>
 
   <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
@@ -48,13 +49,16 @@ $(function() {
   });
 
   // Create the chart 
-  function plotChart(series) {
-    $('#container').highcharts('StockChart', {
+  function plotChart(selector, title, series) {
+    $(selector).highcharts('StockChart', {
       rangeSelector : {
         selected : 1
       },
       title : {
-        text : 'Driving Time, in mins, Between Optics Planet and Logan Sq'
+        text : 'Driving Time, in mins, '+ title
+      },
+      tooltip:{
+        xDateFormat: '%b %e %a %H:%M' // http://php.net/manual/en/function.strftime.php
       },
       series : series
     });
@@ -71,6 +75,28 @@ $(function() {
     return data;
   }
 
+  function buildSeries2(rawData, startHour) {
+    var data = [];
+    var startTime =  startHour * 60*60*1000; //  in utc, 23 hrs is 6pm in chicago
+    var hoursInDay = 24 * 60 * 60 * 1000;
+    var windowTime = 10*60*1000; // 10 min window
+    var epochMs;
+    var lastAdded = 0;
+    for (var ii=0; ii < rawData.length; ii++) {
+      epochMs = Date.parse(rawData[ii].createdAt);
+      daily = epochMs % hoursInDay;
+      // only count once per day, starting at startTime, ending before endTime
+      if (epochMs-lastAdded > windowTime
+          && daily > startTime 
+          && daily < (startTime + windowTime)) {
+        console.log('yo', rawData[ii].createdAt, epochMs, daily);
+        data.push([epochMs, rawData[ii].mins]);
+        lastAdded = epochMs;
+      }
+    }
+    return data;
+  }
+
   $.when(
     $.getJSON('http://api-sails.herokuapp.com/driving_time/?t=From-Optics-Planet'),
     $.getJSON('http://api-sails.herokuapp.com/driving_time/?t=To-Optics-Planet')
@@ -78,14 +104,36 @@ $(function() {
   ).done(function(a1,  a2){
 
     console.log('done getJSON:', a1, a2);
-    plotChart([{
+
+    plotChart('#container', 'Between Optics Planet and Logan Sq', [{
       name : 'From Optics Planet',
       data : buildSeries(a1[0])
     }, {
       name : 'To Optics Planet',
       data : buildSeries(a2[0])
+    }]);
+    
+    plotChart('#container2', 'From Optics Planet leaving 6pm, 6:30, ...', [{
+      name : 'From Optics Planet, 6pm',
+      data : buildSeries2(a1[0], 23)
+    }, {
+      name : 'From Optics Planet, 6:30pm',
+      data : buildSeries2(a1[0], 23.5)
+    }, {
+      name : 'From Optics Planet, 7pm',
+      data : buildSeries2(a1[0], 0)
+    }, {
+      name : 'From Optics Planet, 7:30pm',
+      data : buildSeries2(a1[0], 0.5)
+    }, {
+      name : 'From Optics Planet, 8pm',
+      data : buildSeries2(a1[0], 1)
+    }, {
+      name : 'From Optics Planet, 8:30pm',
+      data : buildSeries2(a1[0], 1.5)
     }])
   });
+
 
 });
 
