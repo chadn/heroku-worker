@@ -2,10 +2,10 @@ heroku-worker
 =============
 
 An example of how to run background tasks in heroku using 
-javascript (node.js) and phatomjs, among other things.
+javascript (node.js) and phantomjs, among other things.
 
 Specifically [phantom.commute.js](bin/phantom.commute.js) shows how to use 
-[phantom.js](http://phantomjs.org/), a headless browswer, to 
+[phantom.js](http://phantomjs.org/), a headless browser, to 
 
 1. Fetch a page. In this case, google directions between any two addresses
 1. Extract data. In this case, the driving time including traffic
@@ -47,7 +47,7 @@ Commit those changes to git
 
 ### Setup Heroku
 
-Now we'll create a heroku app, and set up cron-like tasks to accomplish our gaol.
+Now we'll create a heroku app, and set up cron-like tasks to accomplish our goal.
 
 I use `node-worker` for the heroku app name, you will need to choose your own name.
 
